@@ -83,7 +83,7 @@ void RosImgProcessorNode::process()
 
                 //imprimeix coordenades Ray director
                 d= Kinv*u;
-                std::cout << d << std::endl;
+                std::cout <<"Ray Director"<< d << std::endl;
 
                 center = cv::Point(cvRound(circles[ii][0]), cvRound(circles[ii][1]));
                 radius = cvRound(circles[ii][2]);
