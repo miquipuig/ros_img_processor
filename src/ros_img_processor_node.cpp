@@ -38,9 +38,12 @@ void RosImgProcessorNode::process()
     cv::Mat gray_image;
     int radius;
     std::vector<cv::Vec3f> circles;
-
-
-
+    cv::Mat K = (cv::Mat_<double>(3,3) << 538.8181225518491, 0, 538.8181225518491, 0, 538.8181225518491, 538.8181225518491, 0, 0, 1);
+    cv::Mat u=(cv::Mat_<double>(3,1)<< 0,0,0);
+    cv::Mat d;
+    double xcenter=640/2;
+    double ycenter=480/2;
+    cv::Point centerp = cv::Point(xcenter, ycenter);
     //check if new image is there
     if ( cv_img_ptr_in_ != nullptr )
     {
@@ -58,15 +61,38 @@ void RosImgProcessorNode::process()
 
 		//find the direction vector
 		//TODO
+     cv::Mat Kinv= K.inv();
+     //exemple de u
+     //cv::Mat u=(cv::Mat_<double>(3,1)<< 1,1,0);
+     //cv::Mat d= Kinv*u;
 
-    for(unsigned int ii = 0; ii < 1; ii++ )
+
+
+
+
+
+    for(unsigned int ii = 0; ii < circles.size(); ii++ )
     {
+
         if ( circles[ii][0] != -1 )
         {
+                //std::cout << "Circulo: " << circles[ii][0] <<";"<< circles[ii][1]<<";"<< circles[ii][2]<<std::endl;
+
+
+                u=(cv::Mat_<double>(3,1)<< circles[ii][0] -xcenter, circles[ii][0] - ycenter,0);
+
+                //imprimeix coordenades Ray director
+                d= Kinv*u;
+                std::cout << d << std::endl;
+
                 center = cv::Point(cvRound(circles[ii][0]), cvRound(circles[ii][1]));
                 radius = cvRound(circles[ii][2]);
                 cv::circle(cv_img_out_.image, center, 5, cv::Scalar(0,0,255), -1, 8, 0 );// circle center in green
                 cv::circle(cv_img_out_.image, center, radius, cv::Scalar(0,0,255), 3, 8, 0 );// circle perimeter in red
+                //vector Ray director
+                cv::line(cv_img_out_.image,centerp,center,cv::Scalar(0,0,255), 8); //linea
+
+
         }
     }
 
